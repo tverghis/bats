@@ -1,3 +1,4 @@
+use log::{error, info, warn};
 use std::{fs::File, io::Read, path::PathBuf};
 
 use serde::{Deserialize, Serialize};
@@ -22,7 +23,7 @@ impl Settings {
         match File::open(&config_file_path) {
             Ok(file) => Self::from_config_file_or_default(file),
             Err(e) => {
-                println!(
+                warn!(
                     "Failed to load config file from {}: {}. Using default settings.",
                     config_file_path, e
                 );
@@ -37,11 +38,11 @@ impl Settings {
         file.read_to_string(&mut buf)?;
         match toml::from_str(&buf) {
             Ok(s) => {
-                println!("Successfully loaded config.toml.");
+                info!("Successfully loaded config.toml.");
                 Ok(s)
             }
             Err(_) => {
-                println!("Failed to parse config.toml. Using default settings.");
+                error!("Failed to parse config.toml. Using default settings.");
                 Ok(Self::default())
             }
         }

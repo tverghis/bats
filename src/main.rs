@@ -2,6 +2,8 @@ use bats::settings::Settings;
 use eframe::egui;
 
 fn main() {
+    env_logger::init();
+
     let _ = Settings::load().unwrap();
     let native_options = eframe::NativeOptions::default();
     eframe::run_native(
