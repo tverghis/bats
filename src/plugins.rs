@@ -3,6 +3,7 @@ use std::{
     ffi::OsString,
     fs::{self, DirEntry},
     ops::Not,
+    path::{Path, PathBuf},
 };
 
 use anyhow::Context;
@@ -12,42 +13,48 @@ use crate::settings::Settings;
 
 const IGNORE_FILES: [&str; 1] = [".DS_Store"];
 
-pub fn discover_plugins(settings: &Settings) -> anyhow::Result<HashMap<OsString, Vec<OsString>>> {
+pub fn discover_ae_app_dirs(settings: &Settings) -> anyhow::Result<Vec<PathBuf>> {
     info!(
         "Discovering After Effects application directories in {:?}",
         &settings.ae_parent_dir
     );
 
-    let mut out: HashMap<OsString, Vec<OsString>> = HashMap::new();
-
-    let ae_application_dirs: Vec<_> = fs::read_dir(&settings.ae_parent_dir)
-        .with_context(|| {
-            format!(
-                "Could not list entries in After Effects parent directory {}",
-                settings.ae_parent_dir.to_string_lossy()
-            )
-        })?
+    let dirs = fs::read_dir(&settings.ae_parent_dir)?
         .filter_map(|e| match e {
             Ok(dir_entry) => validate_ae_dir_entry(dir_entry),
             Err(_) => None,
         })
+        .map(|e| e.path())
         .collect();
 
+    Ok(dirs)
+}
+
+pub fn discover_plugins(settings: &Settings) -> anyhow::Result<HashMap<OsString, Vec<OsString>>> {
+    let mut out: HashMap<OsString, Vec<OsString>> = HashMap::new();
+
+    let ae_application_dirs: Vec<_> = discover_ae_app_dirs(settings).with_context(|| {
+        format!(
+            "Could not list entries in After Effects parent directory {}",
+            settings.ae_parent_dir.to_string_lossy()
+        )
+    })?;
+
     for app_dir in ae_application_dirs.iter() {
+        // .unwrap() is justified -- these directories must have names, since we are iterating through a Vec of directories.
+        let dir_name = app_dir.file_name().unwrap();
+
         let plugins = dir_plugins(app_dir).with_context(|| {
-            format!(
-                "Could not read plugins for {}",
-                app_dir.file_name().to_string_lossy()
-            )
+            format!("Could not read plugins for {}", dir_name.to_string_lossy())
         })?;
 
         for plugin in plugins.iter() {
-            let e = out.entry(plugin.file_name()).or_insert(Vec::new());
-            e.push(app_dir.file_name());
+            let e = out.entry(plugin.file_name()).or_default();
+            e.push(dir_name.to_owned());
         }
     }
 
-    Ok(dbg!(out))
+    Ok(out)
 }
 
 // Check if a `DirEntry` represents an Adobe After Effects application directory
@@ -66,8 +73,8 @@ fn validate_ae_dir_entry(dir_entry: DirEntry) -> Option<DirEntry> {
     }
 }
 
-fn dir_plugins(dir_entry: &DirEntry) -> anyhow::Result<Vec<DirEntry>> {
-    let plugin_dir = dir_entry.path().join("Plug-ins");
+fn dir_plugins(dir: &Path) -> anyhow::Result<Vec<DirEntry>> {
+    let plugin_dir = dir.join("Plug-ins");
 
     Ok(fs::read_dir(plugin_dir)?
         .filter_map(Result::ok)
