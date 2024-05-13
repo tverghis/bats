@@ -7,7 +7,7 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Settings {
     /// Directory in which the After Effects applications are installed
-    ae_parent_dir: PathBuf,
+    pub ae_parent_dir: PathBuf,
 }
 
 impl Settings {

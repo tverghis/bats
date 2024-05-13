@@ -1,10 +1,12 @@
-use bats::settings::Settings;
+use bats::{plugins::discover_plugins, settings::Settings};
 use eframe::egui;
 
 fn main() {
     env_logger::init();
 
-    let _ = Settings::load().unwrap();
+    let settings = Settings::load().unwrap();
+    let _ = discover_plugins(&settings);
+
     let native_options = eframe::NativeOptions::default();
     eframe::run_native(
         "Bats!",
