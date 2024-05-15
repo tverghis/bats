@@ -32,6 +32,7 @@ pub fn discover_ae_app_dirs(settings: &Settings) -> anyhow::Result<Vec<PathBuf>>
 
 pub fn discover_plugins(settings: &Settings) -> anyhow::Result<HashMap<OsString, Vec<OsString>>> {
     let mut out: HashMap<OsString, Vec<OsString>> = HashMap::new();
+    let mut total_plugin_count: u32 = 0;
 
     let ae_application_dirs: Vec<_> = discover_ae_app_dirs(settings).with_context(|| {
         format!(
@@ -51,8 +52,15 @@ pub fn discover_plugins(settings: &Settings) -> anyhow::Result<HashMap<OsString,
         for plugin in plugins.iter() {
             let e = out.entry(plugin.file_name()).or_default();
             e.push(dir_name.to_owned());
+            total_plugin_count += 1;
         }
     }
+
+    info!(
+        "Discovered {} plugins in {} application directories.",
+        total_plugin_count,
+        ae_application_dirs.len()
+    );
 
     Ok(out)
 }
