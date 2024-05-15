@@ -30,18 +30,11 @@ pub fn discover_ae_app_dirs(settings: &Settings) -> anyhow::Result<Vec<PathBuf>>
     Ok(dirs)
 }
 
-pub fn discover_plugins(settings: &Settings) -> anyhow::Result<HashMap<OsString, Vec<OsString>>> {
+pub fn discover_plugins(app_dirs: &[PathBuf]) -> anyhow::Result<HashMap<OsString, Vec<OsString>>> {
     let mut out: HashMap<OsString, Vec<OsString>> = HashMap::new();
     let mut total_plugin_count: u32 = 0;
 
-    let ae_application_dirs: Vec<_> = discover_ae_app_dirs(settings).with_context(|| {
-        format!(
-            "Could not list entries in After Effects parent directory {}",
-            settings.ae_parent_dir.to_string_lossy()
-        )
-    })?;
-
-    for app_dir in ae_application_dirs.iter() {
+    for app_dir in app_dirs.iter() {
         // .unwrap() is justified -- these directories must have names, since we are iterating through a Vec of directories.
         let dir_name = app_dir.file_name().unwrap();
 
@@ -59,7 +52,7 @@ pub fn discover_plugins(settings: &Settings) -> anyhow::Result<HashMap<OsString,
     info!(
         "Discovered {} plugins in {} application directories.",
         total_plugin_count,
-        ae_application_dirs.len()
+        app_dirs.len()
     );
 
     Ok(out)
