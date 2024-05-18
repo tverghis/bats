@@ -13,6 +13,8 @@ use crate::settings::Settings;
 
 const IGNORE_FILES: [&str; 1] = [".DS_Store"];
 
+pub type PluginMap = HashMap<OsString, Vec<OsString>>;
+
 pub fn discover_ae_app_dirs(settings: &Settings) -> anyhow::Result<Vec<PathBuf>> {
     info!(
         "Discovering After Effects application directories in {:?}",
@@ -30,7 +32,7 @@ pub fn discover_ae_app_dirs(settings: &Settings) -> anyhow::Result<Vec<PathBuf>>
     Ok(dirs)
 }
 
-pub fn discover_plugins(app_dirs: &[PathBuf]) -> anyhow::Result<HashMap<OsString, Vec<OsString>>> {
+pub fn discover_plugins(app_dirs: &[PathBuf]) -> anyhow::Result<PluginMap> {
     let mut out: HashMap<OsString, Vec<OsString>> = HashMap::new();
     let mut total_plugin_count: u32 = 0;
 
