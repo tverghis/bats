@@ -1,8 +1,10 @@
 function App() {
   return (
-    <>
-      <h1 className="text-3xl font-bold underline">Hello, world!</h1>
-    </>
+    <div className="bg-rosePine-base h-screen">
+      <h1 className="text-3xl font-bold underline text-rosePine-text">
+        Hello, world!
+      </h1>
+    </div>
   );
 }
 
