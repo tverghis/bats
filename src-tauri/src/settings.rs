@@ -1,5 +1,6 @@
 use log::{error, info, warn};
 use std::{fs::File, io::Read, path::PathBuf};
+use tap::TapFallible;
 
 use serde::{Deserialize, Serialize};
 
@@ -30,6 +31,14 @@ impl Settings {
                 Ok(Self::default())
             }
         }
+    }
+
+    /// Load settings from expected locations.
+    /// This function will panic if loading fails.
+    pub fn load_fallible() -> Self {
+        Self::load()
+            .tap_err(|err| error!("Failed to load settings: {}", err))
+            .unwrap()
     }
 
     fn from_config_file_or_default(mut file: File) -> anyhow::Result<Self> {
