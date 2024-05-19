@@ -1,6 +1,5 @@
 use std::{
     collections::HashMap,
-    ffi::OsString,
     fs::{self, DirEntry},
     ops::Not,
     path::{Path, PathBuf},
@@ -13,8 +12,12 @@ use crate::settings::Settings;
 
 const IGNORE_FILES: [&str; 1] = [".DS_Store"];
 
-pub type PluginMap = HashMap<OsString, Vec<OsString>>;
+pub type AeVersion = String;
+pub type PluginMap = HashMap<String, Vec<PathBuf>>;
+pub type AeInstallMap = HashMap<AeVersion, PluginMap>;
 
+/// Discovers all After Effects installations in the configured location.
+/// Returns a `Vec` of the absolute paths pointing to the discovered directories.
 pub fn discover_ae_app_dirs(settings: &Settings) -> anyhow::Result<Vec<PathBuf>> {
     info!(
         "Discovering After Effects application directories in {:?}",
@@ -33,7 +36,7 @@ pub fn discover_ae_app_dirs(settings: &Settings) -> anyhow::Result<Vec<PathBuf>>
 }
 
 pub fn discover_plugins(app_dirs: &[PathBuf]) -> anyhow::Result<PluginMap> {
-    let mut out: HashMap<OsString, Vec<OsString>> = HashMap::new();
+    let mut out: PluginMap = HashMap::new();
     let mut total_plugin_count: u32 = 0;
 
     for app_dir in app_dirs.iter() {
