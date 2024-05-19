@@ -48,8 +48,10 @@ pub fn discover_plugins(app_dirs: &[PathBuf]) -> anyhow::Result<PluginMap> {
         })?;
 
         for plugin in plugins.iter() {
-            let e = out.entry(plugin.file_name()).or_default();
-            e.push(dir_name.to_owned());
+            let e = out
+                .entry(plugin.file_name().to_str().unwrap().to_owned())
+                .or_default();
+            e.push(dir_name.into());
             total_plugin_count += 1;
         }
     }
