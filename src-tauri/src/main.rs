@@ -7,7 +7,10 @@ fn main() {
     env_logger::init();
 
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![commands::discover_ae_app_dirs])
+        .invoke_handler(tauri::generate_handler![
+            commands::discover_ae_app_dirs,
+            commands::discover_plugins
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

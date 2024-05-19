@@ -1,14 +1,36 @@
-use std::path::PathBuf;
+use log::{error, info};
 
-use log::info;
+use crate::{
+    plugins::{self, AeVersion, PluginMap},
+    settings::Settings,
+};
 
-use crate::{plugins, settings::Settings};
+use tap::tap::{TapFallible, TapOptional};
 
 #[tauri::command]
-pub fn discover_ae_app_dirs() -> Vec<PathBuf> {
+pub fn discover_ae_app_dirs() -> Vec<AeVersion> {
     info!("discover_ae_app_dirs invoked");
 
     let settings = Settings::load().unwrap();
 
-    plugins::discover_ae_app_dirs(&settings).unwrap()
+    plugins::discover_ae_app_dirs(&settings)
+        .tap_err(|err| error!("Failed to discover AE app directories: {}", err))
+        .unwrap_or(Vec::new())
+        .iter()
+        .map(|dir| {
+            dir.file_name()
+                .map(|name| name.to_string_lossy().into_owned())
+                .tap_none(|| error!("File name is None for {:?}", dir))
+                .unwrap_or(String::from("undefined"))
+        })
+        .collect()
+}
+
+#[tauri::command]
+pub fn discover_plugins() -> PluginMap {
+    info!("discover_plugins invoked");
+    let settings = Settings::load().unwrap();
+    let dirs = plugins::discover_ae_app_dirs(&settings).unwrap();
+
+    plugins::discover_plugins(&dirs).unwrap()
 }
