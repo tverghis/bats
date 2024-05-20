@@ -8,12 +8,16 @@ function App() {
   const [plugins] = createResource(() => invoke("discover_plugins"));
   const [loadedPlugins, setLoadedPlugins] = createSignal([]);
   const [pluginNames, setPluginNames] = createSignal([]);
+  const [mainDisplaySubject, setMainDisplaySubject] = createSignal({
+    kind: "Empty",
+  });
 
   createEffect(() => {
     if (!plugins.loading && !plugins.error) {
       setLoadedPlugins(plugins());
       const names = Object.keys(plugins()).sort();
       setPluginNames(names);
+      setMainDisplaySubject({ kind: "PluginsTable" });
     }
   });
 
@@ -23,7 +27,11 @@ function App() {
         <Sidebar plugins={pluginNames()} />
       </div>
       <div className="py-8 w-full">
-        <MainDisplay plugins={loadedPlugins()} />
+        <MainDisplay
+          plugins={loadedPlugins()}
+          subject={mainDisplaySubject()}
+          setSubject={setMainDisplaySubject}
+        />
       </div>
       <div className="fixed bottom-0 left-0 right-0 border-t border-t-rosePine-highlightHigh bg-rosePine-surface">
         <StatusBar />

@@ -31,7 +31,6 @@ function PluginsTable(props) {
 
 function getInstalledList(plugins, pluginName) {
   const plugin = plugins[pluginName];
-  console.log(plugin);
 
   const installedVersions = Object.entries(plugin)
     .filter(([_, v]) => v)
