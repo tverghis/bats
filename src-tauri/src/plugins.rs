@@ -13,8 +13,8 @@ use crate::settings::Settings;
 const IGNORE_FILES: [&str; 1] = [".DS_Store"];
 
 pub type AeVersion = String;
-pub type PluginMap = HashMap<String, Vec<PathBuf>>;
-pub type AeInstallMap = HashMap<AeVersion, PluginMap>;
+pub type PluginName = String;
+pub type PluginMap = HashMap<PluginName, HashMap<AeVersion, bool>>;
 
 /// Discovers all After Effects installations in the configured location.
 /// Returns a `Vec` of the absolute paths pointing to the discovered directories.
@@ -37,28 +37,31 @@ pub fn discover_ae_app_dirs(settings: &Settings) -> anyhow::Result<Vec<PathBuf>>
 
 pub fn discover_plugins(app_dirs: &[PathBuf]) -> anyhow::Result<PluginMap> {
     let mut out: PluginMap = HashMap::new();
-    let mut total_plugin_count: u32 = 0;
 
     for app_dir in app_dirs.iter() {
         // .unwrap() is justified -- these directories must have names, since we are iterating through a Vec of directories.
-        let dir_name = app_dir.file_name().unwrap();
+        let dir_name = app_dir.file_name().unwrap().to_string_lossy().to_string();
 
-        let plugins = dir_plugins(app_dir).with_context(|| {
-            format!("Could not read plugins for {}", dir_name.to_string_lossy())
-        })?;
+        let plugins = dir_plugins(app_dir)
+            .with_context(|| format!("Could not read plugins for {}", dir_name))?;
 
         for plugin in plugins.iter() {
-            let e = out
-                .entry(plugin.file_name().to_str().unwrap().to_owned())
-                .or_default();
-            e.push(dir_name.into());
-            total_plugin_count += 1;
+            let e = out.entry(plugin.to_owned()).or_default();
+
+            e.insert(dir_name.clone(), true);
+        }
+    }
+
+    for (_, m) in out.iter_mut() {
+        for app_dir in app_dirs.iter() {
+            let dir_name = app_dir.file_name().unwrap().to_string_lossy().to_string();
+            m.entry(dir_name).or_insert(false);
         }
     }
 
     info!(
         "Discovered {} plugins in {} application directories.",
-        total_plugin_count,
+        out.values().len(),
         app_dirs.len()
     );
 
@@ -81,12 +84,13 @@ fn validate_ae_dir_entry(dir_entry: DirEntry) -> Option<DirEntry> {
     }
 }
 
-fn dir_plugins(dir: &Path) -> anyhow::Result<Vec<DirEntry>> {
+fn dir_plugins(dir: &Path) -> anyhow::Result<Vec<PluginName>> {
     let plugin_dir = dir.join("Plug-ins");
 
     Ok(fs::read_dir(plugin_dir)?
         .filter_map(Result::ok)
         .filter(is_ignored_file)
+        .map(|dir_entry| dir_entry.file_name().to_string_lossy().to_string())
         .collect())
 }
 
