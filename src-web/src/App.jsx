@@ -1,7 +1,7 @@
 import { invoke } from "@tauri-apps/api";
 import { createEffect, createResource, createSignal } from "solid-js";
 import StatusBar from "./components/StatusBar";
-import Sidebar from "./components/Sidebar";
+import { Sidebar } from "./components/sidebar";
 
 function App() {
   const [plugins] = createResource(() => invoke("discover_plugins"));
@@ -22,11 +22,7 @@ function App() {
   return (
     <div className="bg-rosePine-base text-rosePine-text h-screen flex flex-row select-none cursor-default">
       <div className="h-full py-8 border-r border-r-rosePine-highlightHigh bg-rosePine-surface">
-        <Sidebar
-          plugins={pluginNames()}
-          selectPlugin={setSelectedPluginName}
-          selectedPluginName={selectedPluginName()}
-        />
+        <Sidebar plugins={pluginNames()} />
       </div>
       <div className="p-8">
         <div className="mb-8">
