@@ -2,8 +2,14 @@ import { Show } from "solid-js";
 
 function Sidebar(props) {
   return (
-    <div className="w-40 px-8">
+    <div className="w-52 px-8">
       <nav>
+        <span className="flex flex-row place-content-between">
+          <h3 className="font-semibold">Plugins</h3>
+          <span className="text-rosePine-muted">
+            {getPluginCount(props.plugins)}
+          </span>
+        </span>
         <Show when={props.plugins.length > 0} fallback={<PluginListFallback />}>
           <PluginList
             plugins={props.plugins}
@@ -24,7 +30,7 @@ function PluginList(props) {
           return (
             <li
               onClick={[props.selectPlugin, plugin]}
-              className={`cursor-pointer ${plugin !== props.selectedPluginName ? "text-rosePine-muted" : ""}`}
+              className={`cursor-pointer ${plugin !== props.selectedPluginName ? "text-rosePine-subtle" : ""}`}
             >
               {plugin}
             </li>
@@ -37,6 +43,16 @@ function PluginList(props) {
 
 function PluginListFallback() {
   return <p>No installed plugins</p>;
+}
+
+function getPluginCount(plugins) {
+  const length = plugins.length;
+
+  if (length > 99) {
+    return "99+";
+  }
+
+  return length.toString();
 }
 
 export default Sidebar;

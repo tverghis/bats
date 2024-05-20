@@ -30,7 +30,7 @@ function App() {
       </div>
       <div className="p-8">
         <div className="mb-8">
-          <h1>{selectedPluginName()}</h1>
+          <h3 className="text-lg">Plugin: {selectedPluginName()}</h3>
         </div>
       </div>
       <div className="fixed bottom-0 left-0 right-0 border-t border-t-rosePine-highlightHigh bg-rosePine-surface">
