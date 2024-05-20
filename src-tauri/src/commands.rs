@@ -1,3 +1,5 @@
+use std::{collections::HashMap, path::PathBuf};
+
 use log::{error, info};
 
 use crate::{
@@ -5,17 +7,16 @@ use crate::{
     settings::Settings,
 };
 
-use tap::tap::{TapFallible, TapOptional};
+use tap::{
+    tap::{TapFallible, TapOptional},
+    Pipe,
+};
 
 #[tauri::command]
 pub fn discover_ae_app_dirs() -> Vec<AeVersion> {
     info!("discover_ae_app_dirs invoked");
 
-    let settings = Settings::load_fallible();
-
-    plugins::discover_ae_app_dirs(&settings)
-        .tap_err(|err| error!("Failed to discover AE app directories: {}", err))
-        .unwrap_or(Vec::new())
+    get_app_dirs()
         .iter()
         .map(|dir| {
             dir.file_name()
@@ -30,8 +31,16 @@ pub fn discover_ae_app_dirs() -> Vec<AeVersion> {
 pub fn discover_plugins() -> PluginMap {
     info!("discover_plugins invoked");
 
-    let settings = Settings::load_fallible();
-    let dirs = plugins::discover_ae_app_dirs(&settings).unwrap();
+    get_app_dirs()
+        .pipe(|dirs| plugins::discover_plugins(&dirs))
+        .tap_err(|err| error!("Failed to discover plugins: {}", err))
+        .unwrap_or(HashMap::new())
+}
 
-    plugins::discover_plugins(&dirs).unwrap()
+fn get_app_dirs() -> Vec<PathBuf> {
+    let settings = Settings::load_fallible();
+
+    plugins::discover_ae_app_dirs(&settings)
+        .tap_err(|err| error!("Failed to discover AE app directories: {}", err))
+        .unwrap_or(Vec::new())
 }
