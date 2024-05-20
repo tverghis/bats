@@ -8,6 +8,7 @@ function Sidebar(props) {
           <PluginList
             plugins={props.plugins}
             selectPlugin={props.selectPlugin}
+            selectedPluginName={props.selectedPluginName}
           />
         </Show>
       </nav>
@@ -17,13 +18,13 @@ function Sidebar(props) {
 
 function PluginList(props) {
   return (
-    <ul role="list" className="flex flex-col space-y-1">
+    <ul role="list" className="flex flex-col">
       <For each={props.plugins}>
         {(plugin) => {
           return (
             <li
               onClick={[props.selectPlugin, plugin]}
-              className="cursor-pointer"
+              className={`cursor-pointer ${plugin !== props.selectedPluginName ? "text-rosePine-muted" : ""}`}
             >
               {plugin}
             </li>
