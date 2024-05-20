@@ -4,7 +4,9 @@ function Sidebar(props) {
   return (
     <div className="w-52 px-8">
       <nav>
-        <PluginList plugins={props.plugins} />
+        <div className="cursor-pointer">
+          <PluginList plugins={props.plugins} />
+        </div>
       </nav>
     </div>
   );
