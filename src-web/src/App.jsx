@@ -21,7 +21,7 @@ function App() {
 
   return (
     <div className="bg-rosePine-base text-rosePine-text h-screen flex flex-row">
-      <div className="h-full py-8 border-r border-r-rosePine-highlightHigh">
+      <div className="h-full py-8 border-r border-r-rosePine-highlightHigh bg-rosePine-surface">
         <Sidebar plugins={pluginNames()} selectPlugin={setSelectedPluginName} />
       </div>
       <div className="p-8">
@@ -29,7 +29,7 @@ function App() {
           <h1>{selectedPluginName()}</h1>
         </div>
       </div>
-      <div className="fixed bottom-0 left-0 right-0 border-t border-t-rosePine-highlightHigh">
+      <div className="fixed bottom-0 left-0 right-0 border-t border-t-rosePine-highlightHigh bg-rosePine-surface">
         <StatusBar />
       </div>
     </div>
