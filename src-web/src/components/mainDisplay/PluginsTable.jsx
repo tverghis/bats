@@ -16,7 +16,10 @@ function PluginsTable(props) {
       <tbody className="divide-y-0 divide-rosePine-highlightMed">
         <For each={Object.keys(props.plugins).sort()}>
           {(plugin) => (
-            <tr className="cursor-pointer even:bg-rosePine-surface hover:bg-rosePine-surface">
+            <tr
+              className="cursor-pointer even:bg-rosePine-surface hover:bg-rosePine-surface"
+              onClick={[props.showPluginDetail, plugin, props.plugins[plugin]]}
+            >
               <td className="text-left py-2 pl-4">{plugin}</td>
               <td className="text-right py-2 pr-4 text-rosePine-subtle">
                 {getInstalledList(props.plugins, plugin)}
