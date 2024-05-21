@@ -87,7 +87,14 @@ fn validate_ae_dir_entry(dir_entry: DirEntry) -> Option<DirEntry> {
 fn dir_plugins(dir: &Path) -> anyhow::Result<Vec<PluginName>> {
     let plugin_dir = dir.join("Plug-ins");
 
-    Ok(fs::read_dir(plugin_dir)?
+    if let Err(e) = fs::metadata(&plugin_dir) {
+        match e.kind() {
+            std::io::ErrorKind::NotFound => return Ok(Vec::new()),
+            _ => anyhow::bail!(e),
+        }
+    }
+
+    Ok(fs::read_dir(&plugin_dir)?
         .filter_map(Result::ok)
         .filter(is_ignored_file)
         .map(|dir_entry| dir_entry.file_name().to_string_lossy().to_string())
