@@ -2,7 +2,7 @@ import { For } from "solid-js";
 
 function PluginsTable(props) {
   return (
-    <table className="w-full divide-y divide-rosePine-highlightMed">
+    <table className="w-full divide-y divide-rosePine-highlightHigh">
       <thead>
         <tr>
           <th scope="col" className="text-left pb-4 pl-4 font-semibold">
@@ -13,7 +13,7 @@ function PluginsTable(props) {
           </th>
         </tr>
       </thead>
-      <tbody className="divide-y-0 divide-rosePine-highlightMed">
+      <tbody>
         <For each={Object.keys(props.plugins).sort()}>
           {(plugin) => (
             <tr

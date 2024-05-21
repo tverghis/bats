@@ -19,18 +19,20 @@ function MainDisplay(props) {
         />
       </Match>
       <Match when={props.subject.kind === "PluginDetail"}>
-        <PluginDetail
-          name={props.subject.pluginName}
-          details={props.plugins[props.subject.pluginName]}
-          showPluginsTable={showPluginsTable}
-        />
+        <div className="px-6">
+          <PluginDetail
+            name={props.subject.pluginName}
+            details={props.plugins[props.subject.pluginName]}
+            showPluginsTable={showPluginsTable}
+          />
+        </div>
       </Match>
     </Switch>
   );
 }
 
 function MainDisplayFallback() {
-  return <span>Select an item from the sidebar</span>;
+  return <span className="px-6">Select an item from the sidebar</span>;
 }
 
 export default MainDisplay;

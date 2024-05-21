@@ -4,9 +4,17 @@ function Sidebar(props) {
   return (
     <div className="w-52 px-6">
       <nav>
-        <div className="cursor-pointer">
-          <PluginList plugins={props.plugins} />
-        </div>
+        <ul className="flex flex-col space-y-6">
+          <li
+            className="cursor-pointer"
+            onClick={[props.setSubject, { kind: "PluginsTable" }]}
+          >
+            <PluginList plugins={props.plugins} subject={props.subject} />
+          </li>
+          <li className="cursor-pointer">
+            <span>Scripts</span>
+          </li>
+        </ul>
       </nav>
     </div>
   );

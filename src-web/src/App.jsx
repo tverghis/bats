@@ -24,7 +24,11 @@ function App() {
   return (
     <div className="bg-rosePine-base text-rosePine-text h-screen flex flex-row select-none cursor-default">
       <div className="h-full py-8 border-r border-r-rosePine-highlightHigh bg-rosePine-surface">
-        <Sidebar plugins={pluginNames()} />
+        <Sidebar
+          plugins={pluginNames()}
+          subject={mainDisplaySubject()}
+          setSubject={setMainDisplaySubject}
+        />
       </div>
       <div className="py-8 w-full">
         <MainDisplay

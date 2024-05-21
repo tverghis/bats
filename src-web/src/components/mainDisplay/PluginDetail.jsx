@@ -1,9 +1,7 @@
 function PluginDetail(props) {
-  console.log(props.details);
   return (
     <div>
-      <span>{props.name}</span>
-      <span onClick={[props.showPluginsTable]}>See all</span>
+      <h2 className="font-semibold text-xl">{props.name}</h2>
     </div>
   );
 }
