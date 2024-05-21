@@ -1,13 +1,13 @@
+const HIGHLIGHT_WHEN_DISPLAY = ["PluginsTable", "PluginDetail"];
+
 function PluginList(props) {
   return (
-    <span className="flex flex-row place-content-between group">
-      <h3
-        className={`font-semibold group-hover:text-rosePine-foam ${fontColor(props.subject.kind, ["PluginsTable", "PluginDetail"])}`}
-      >
+    <span className="flex flex-row place-content-between ">
+      <h3 className={`font-semibold ${fontColor(props.subject.kind)}`}>
         Plugins
       </h3>
       <span
-        className={`text-rosePine-muted group-hover:text-rosePine-foam ${fontColor(props.subject.kind, ["PluginsTable", "PluginDetail"])}`}
+        className={`${fontColor(props.subject.kind, "text-rosePine-muted")}`}
       >
         {getPluginCount(props.plugins)}
       </span>
@@ -25,10 +25,10 @@ function getPluginCount(plugins) {
   return length.toString();
 }
 
-function fontColor(kind, toMatch) {
-  const isActive = toMatch.includes(kind);
+function fontColor(kind, baseColor) {
+  const isActive = HIGHLIGHT_WHEN_DISPLAY.includes(kind);
 
-  return isActive ? "text-rosePine-foam" : "";
+  return isActive ? "text-rosePine-foam" : baseColor || "";
 }
 
 export default PluginList;
