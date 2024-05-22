@@ -7,7 +7,7 @@ function SidebarItem(props) {
     >
       <span className="flex flex-row space-x-2 items-center">
         <span>
-          <IconEl />
+          <IconEl class="h-6" />
         </span>
         <h3 className="font-semibold">{props.title}</h3>
       </span>
