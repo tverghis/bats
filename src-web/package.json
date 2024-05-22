@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@tauri-apps/api": "^1.5.6",
+    "lucide-solid": "^0.379.0",
     "solid-js": "^1.8.15"
   },
   "devDependencies": {
