@@ -6,13 +6,10 @@ function Sidebar(props) {
     <div className="w-52 px-3">
       <nav>
         <ul className="flex flex-col space-y-2">
-          <li
-            className="cursor-pointer"
-            onClick={[props.setSubject, { kind: "PluginsTable" }]}
-          >
+          <li onClick={[props.setSubject, { kind: "PluginsTable" }]}>
             <PluginList plugins={props.plugins} isActive={true} />
           </li>
-          <li className="cursor-pointer">
+          <li>
             <ScriptList isActive={false} />
           </li>
         </ul>
