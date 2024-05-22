@@ -3,7 +3,7 @@ function SidebarItem(props) {
 
   return (
     <span
-      className={`flex flex-row place-content-between items-center py-1 px-3 rounded-lg transition-colors hover:bg-rosePine-rose/10 hover:text-rosePine-rose ${props.isActive ? "bg-rosePine-rose/10 text-rosePine-rose" : ""}`}
+      className={`flex flex-row place-content-between items-center py-1 px-3 rounded-lg transition-colors hover:bg-rosePine-rose/10 hover:text-rosePine-rose ${props.isActive ? "bg-rosePine-rose/20 text-rosePine-rose border border-rosePine-rose/10" : ""}`}
     >
       <span className="flex flex-row space-x-2 items-center">
         <span>
